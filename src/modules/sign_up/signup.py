@@ -7,5 +7,10 @@ class Signup:
         pass
 
     @classmethod
-    def signup_process(cls):
+    def signup_process(cls, signup_object):
         rekognition_main = RekognitionMain()
+        add_face_response = rekognition_main.add_face_in_collection(
+            signup_object.get('imageS3Bucket'),
+            signup_object.get('imageBucketName')
+        )
+        return add_face_response
