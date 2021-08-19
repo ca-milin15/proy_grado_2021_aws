@@ -1,14 +1,21 @@
+import json
+
 import boto3
+
 FACE_COLLECTION_NAME = 'coleccionRostrosAutenticacionBiometrica'
 
 
 class RekognitionMain:
-
     client_instance = None
 
     def __init__(self):
-        if self.client_instance is None:
-            self.client_instance = self.get_instance_rekognition()
+        pass
+
+    @classmethod
+    def get_client_instance(cls):
+        if cls.client_instance is None:
+            cls.client_instance = cls.get_instance_rekognition()
+        return cls.client_instance
 
     @classmethod
     def faces_collection_create_process(cls):
@@ -20,15 +27,19 @@ class RekognitionMain:
 
     @classmethod
     def faces_collection_create(cls, collection_name):
-        return cls.client_instance.create_collection(
+        faces_collection_create_resp = cls.get_client_instance().create_collection(
             CollectionId=collection_name
         )
+        print('faces_collection_create:', json.dumps(faces_collection_create_resp))
+        return faces_collection_create_resp
 
     @classmethod
     def faces_collection_search(cls, collection_name):
-        return cls.client.describe_collection(
+        collection_validate = cls.get_client_instance().describe_collection(
             CollectionId=collection_name
         )
+        print('faces_collection_search:', json.dumps(collection_validate))
+        return collection_validate
 
     @classmethod
     def faces_collection_validate(cls, collection_name):
@@ -41,24 +52,27 @@ class RekognitionMain:
 
     @classmethod
     def search_face_in_collection(cls, bucket_path_s3, bucket_name):
-        if cls.faces_collection_validate(FACE_COLLECTION_NAME):
-            return cls.client_instance.search_faces_by_image(
-                CollectionId=FACE_COLLECTION_NAME,
-                Image={
-                    'S3Object': {
-                        'Bucket': bucket_path_s3,
-                        'Name': bucket_name,
+        try:
+            if cls.faces_collection_validate(FACE_COLLECTION_NAME):
+                return cls.get_client_instance().search_faces_by_image(
+                    CollectionId=FACE_COLLECTION_NAME,
+                    Image={
+                        'S3Object': {
+                            'Bucket': bucket_path_s3,
+                            'Name': bucket_name,
+                        }
                     }
-                }
-            )
-        else:
-            # TODO agregar excepcion
+                )
+            else:
+                # TODO agregar excepcion
+                pass
+        finally:
             pass
 
     @classmethod
     def add_face_in_collection(cls, bucket_path_s3, bucket_name):
         if cls.faces_collection_validate(FACE_COLLECTION_NAME):
-            return cls.client_instance.index_faces(
+            index_faces_response = cls.get_client_instance().index_faces(
                 CollectionId=FACE_COLLECTION_NAME,
                 Image={
                     'S3Object': {
@@ -68,3 +82,7 @@ class RekognitionMain:
                 },
                 ExternalImageId=""
             )
+            print('add_face_in_collection:', json.dumps(index_faces_response))
+            return index_faces_response
+        else:
+            cls.faces_collection_create_process()

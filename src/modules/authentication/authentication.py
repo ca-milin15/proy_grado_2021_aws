@@ -1,3 +1,5 @@
+import json
+
 from src.sdk.rekognition.rekognition_main import RekognitionMain
 
 
@@ -37,6 +39,7 @@ class Authentication:
     """
     @classmethod
     def authentication_process(cls, auth_object):
+        print('authentication_process: ', json.dumps(auth_object))
         rekognition_main = RekognitionMain()
         search_response = rekognition_main.search_face_in_collection(
             auth_object.get('imageS3Bucket'),

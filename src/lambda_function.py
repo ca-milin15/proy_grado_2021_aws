@@ -5,6 +5,7 @@ from src.modules.sign_up.signup import Signup
 
 
 def lambda_handler(event, context):
+    print('event: ', json.dumps(event))
     if event and event.get('operationType') and event.get('objectRequest'):
 
         if event.get('operationType') == 'SIGNUP':
