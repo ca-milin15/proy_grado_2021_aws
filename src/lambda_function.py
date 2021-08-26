@@ -1,60 +1,37 @@
 import json
 
+from src.utilities.utility_class import UtilityClass
 from src.modules.authentication.authentication import Authentication
 from src.modules.sign_up.signup import Signup
+from src.utilities.enums.message_enum import MessageEnum
+from src.utilities.enums.operation_type import OperationType
+
+from http import HTTPStatus
 
 
 def lambda_handler(event, context):
     print('event: ', json.dumps(event))
     if event and event.get('operationType') and event.get('objectRequest'):
 
-        if event.get('operationType') == 'SIGNUP':
+        if event.get('operationType') == OperationType.SIGNUP_OPERATION.value:
             signup_main = Signup()
-            signup_main.signup_process(event.get('objectRequest'))
-            return {
-                'statusCode': 200,
-                'body': generic_body_response_object(
-                    'El codigo de la transacciòn no es valido',
-                    'El codigo de la transacciòn no corresponde que las posibles acciones'
-                )
-            }
-        elif event.get('operationType') == 'AUTH':
+            return signup_main.signup_process(event.get('objectRequest'))
+        elif event.get('operationType') == OperationType.AUTH_OPERATION.value:
             auth_main = Authentication()
-            auth_main.authentication_process(event.get('objectRequest'))
-            return {
-                'statusCode': 200,
-                'body': generic_body_response_object(
-                    'El codigo de la transacciòn no es valido',
-                    'El codigo de la transacciòn no corresponde que las posibles acciones'
-                )
-            }
+            return auth_main.authentication_process(event.get('objectRequest'))
         else:
-            return {
-                'statusCode': 400,
-                'body': generic_body_response_object(
-                    'El codigo de la transacciòn no es valido',
-                    'El codigo de la transacciòn no corresponde que las posibles acciones'
+            return UtilityClass.generic_response_object(
+                HTTPStatus.BAD_REQUEST,
+                UtilityClass.generic_body_response_object(
+                    MessageEnum.ACTION_REQUEST_MESSAGE_NOT_FOUND.value,
+                    MessageEnum.ACTION_REQUEST_REASON_NOT_FOUND.value
                 )
-            }
-    else:
-        return {
-            'statusCode': 400,
-            'body': generic_body_response_object(
-                'Error en el payload de la peticion',
-                ''
             )
-        }
-
-
-def generic_response_object(code, body_as_json):
-    return {
-        'statusCode': code,
-        'body': body_as_json
-    }
-
-
-def generic_body_response_object(message, reason):
-    return {
-        'message': message,
-        'reason': reason
-    }
+    else:
+        return UtilityClass.generic_response_object(
+            HTTPStatus.BAD_REQUEST,
+            UtilityClass.generic_body_response_object(
+                MessageEnum.PAYLOAD_REQUEST_MESSAGE_NOT_FOUND.value,
+                MessageEnum.PAYLOAD_REQUEST_REASON_NOT_FOUND.value
+            )
+        )
