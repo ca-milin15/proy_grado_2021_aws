@@ -133,3 +133,5 @@ dmypy.json
 *.zip
 
 .idea/inspectionProfiles/profiles_settings.xml
+
+src/sdk/sdk_general_config.py
