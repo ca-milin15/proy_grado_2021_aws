@@ -21,10 +21,23 @@ class Authentication:
         )
         print('search_response:', json.dumps(search_response))
         if search_response.get('FaceMatches') and len(search_response.get('FaceMatches')) > 0:
+            result = list(map(lambda object:
+                {
+                    'similarity' : object.get('Similarity'),
+                    'face': {
+                        'faceId': object.get('Face').get('FaceId'),
+                        'imageId': object.get('Face').get('ImageId'),
+                        'externalImageId': object.get('Face').get('ExternalImageId'),
+                        'confidence': object.get('Face').get('Confidence')
+                    }
+                },
+            search_response.get('FaceMatches')
+            ))
+            print('result:', json.dumps(result))
             return UtilityClass.generic_response_object(
                 HTTPStatus.OK,
                 {
-                    'imageId': search_response.get('FaceMatches')[0].get('Face').get('ImageId')
+                    'faceMatches': result
                 }
             )
         else:

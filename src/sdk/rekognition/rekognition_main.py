@@ -2,7 +2,6 @@ import json
 
 import botocore.exceptions
 import logging
-
 from src.sdk.sdk_general_config import SDKGeneralConfig
 
 FACE_COLLECTION_NAME = 'coleccionRostrosAutenticacionBiometrica'
@@ -74,7 +73,7 @@ class RekognitionMain:
             pass
 
     @classmethod
-    def add_face_in_collection(cls, bucket_path_s3, bucket_name):
+    def add_face_in_collection(cls, bucket_path_s3, bucket_name, external_id):
         if cls.faces_collection_search(FACE_COLLECTION_NAME):
             index_faces_response = cls.get_client_instance().index_faces(
                 CollectionId=FACE_COLLECTION_NAME,
@@ -83,10 +82,9 @@ class RekognitionMain:
                         'Bucket': bucket_path_s3,
                         'Name': bucket_name,
                     }
-                }
-                # ,ExternalImageId=""
+                },ExternalImageId=external_id
             )
-            print('add_face_in_collection:', json.dumps(index_faces_response))
+            print('add_face_in_collection_response:', json.dumps(index_faces_response))
             return index_faces_response
         else:
             cls.faces_collection_create_process()

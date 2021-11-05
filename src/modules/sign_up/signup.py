@@ -17,7 +17,8 @@ class Signup:
         rekognition_main = RekognitionMain()
         add_face_response = rekognition_main.add_face_in_collection(
             signup_object.get('imageS3Bucket'),
-            signup_object.get('imageBucketName')
+            signup_object.get('imageBucketName'),
+            signup_object.get('externalId')
         )
         if add_face_response and add_face_response.get('FaceRecords') and len(add_face_response.get('FaceRecords')) > 0:
             return UtilityClass.generic_response_object(
