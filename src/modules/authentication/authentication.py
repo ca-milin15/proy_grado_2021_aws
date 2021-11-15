@@ -12,12 +12,13 @@ class Authentication:
         pass
 
     @classmethod
-    def authentication_process(cls, auth_object):
+    def authentication_process(cls, auth_object, active_profile):
         print('authentication_process: ', json.dumps(auth_object))
         rekognition_main = RekognitionMain()
         search_response = rekognition_main.search_face_in_collection(
             auth_object.get('imageS3Bucket'),
-            auth_object.get('imageBucketName')
+            auth_object.get('imageBucketName'),
+            active_profile
         )
         print('search_response:', json.dumps(search_response))
         if search_response.get('FaceMatches') and len(search_response.get('FaceMatches')) > 0:

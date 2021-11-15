@@ -12,13 +12,14 @@ class Signup:
         pass
 
     @classmethod
-    def signup_process(cls, signup_object):
+    def signup_process(cls, signup_object, active_profile):
         print('signup_process: ', json.dumps(signup_object))
         rekognition_main = RekognitionMain()
         add_face_response = rekognition_main.add_face_in_collection(
             signup_object.get('imageS3Bucket'),
             signup_object.get('imageBucketName'),
-            signup_object.get('externalId')
+            signup_object.get('externalId'),
+            active_profile
         )
         if add_face_response and add_face_response.get('FaceRecords') and len(add_face_response.get('FaceRecords')) > 0:
             return UtilityClass.generic_response_object(

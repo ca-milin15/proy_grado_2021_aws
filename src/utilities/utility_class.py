@@ -17,3 +17,10 @@ class UtilityClass:
             'message': message,
             'reason': reason
         }
+
+    @staticmethod
+    def get_active_profile(invoked_function_arn):
+        print("Lambda function ARN: ", invoked_function_arn)
+        url_as_array = invoked_function_arn.split(":")
+        profile = url_as_array[len(url_as_array)-1]
+        return profile
