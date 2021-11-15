@@ -2,6 +2,7 @@ import json
 
 import botocore.exceptions
 import logging
+from http import HTTPStatus
 from src.sdk.sdk_general_config import SDKGeneralConfig
 
 FACE_COLLECTION_NAME = 'coleccionRostrosAutenticacionBiometrica'
@@ -89,10 +90,24 @@ class RekognitionMain:
                     }
                 )
             else:
-                # TODO agregar excepcion
-                pass
-        finally:
-            pass
+                return UtilityClass.generic_response_object(
+                    HTTPStatus.NOT_FOUND,
+                    UtilityClass.generic_body_response_object(
+                        MessageEnum.AUTHENTICATION_FAILED.value,
+                        MessageEnum.AUTHENTICATION_FAILED_REASON.value
+                    )
+                )
+        except botocore.exceptions.ClientError as error:
+            if error.response['Error']['Code'] == 'ResourceNotFoundException':
+                return UtilityClass.generic_response_object(
+                    HTTPStatus.NOT_FOUND,
+                    UtilityClass.generic_body_response_object(
+                        MessageEnum.AUTHENTICATION_FAILED.value,
+                        MessageEnum.AUTHENTICATION_FAILED_REASON.value
+                    )
+                )
+            else:
+                print('Error no controlado: ', error)
 
     @classmethod
     def add_face_in_collection(cls, bucket_path_s3, bucket_name, external_id, active_profile):

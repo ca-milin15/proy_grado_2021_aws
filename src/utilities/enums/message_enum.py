@@ -13,5 +13,8 @@ class MessageEnum(Enum):
     PAYLOAD_REQUEST_MESSAGE_NOT_FOUND = 'Ha ocurrido un error en el cuerpo de la petición.'
     PAYLOAD_REQUEST_REASON_NOT_FOUND = \
         'Posiblemente haya ocurrido un error interno en el proceso. Comunicarse con el proveedor.'
+    AUTHENTICATION_FAILED = 'No se llevo a cabo el proceso de auteticacion exitosamente.'
+    AUTHENTICATION_FAILED_REASON = \
+        'El usuario no tiene registrado datios biometricos en el sistema.'
 
 
